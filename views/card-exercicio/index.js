@@ -4,21 +4,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 import styles from "./styles";
 
-export default class CardFicha extends Component {
+export default class CardExercicio extends Component {
   state = {
-    ficha: this.props.ficha,
+    exercicio: this.props.exercicio,
     id: this.props.id
   };
 
   render() {
-    let { ficha, id } = this.state;
+    let { exercicio, id } = this.state;
     return (
-      <View style={styles.ficha}>
-        <Text>Nome Exercicio: {ficha.exercicio}</Text>
-        <Text>Nº: {ficha.numero}</Text>
-        <Text>Carga: {ficha.carga}</Text>
-        <Text>Series: {ficha.series}</Text>
-        <Text>Repetições: {ficha.repeticoes}</Text>
+      <View style={styles.exercicio}>
+        <Text>Nome Exercicio: {exercicio.nome}</Text>
+        <Text>Nº: {exercicio.numero}</Text>
+        <Text>Carga: {exercicio.carga}</Text>
+        <Text>Series: {exercicio.series}</Text>
+        <Text>Repetições: {exercicio.repeticoes}</Text>
         <TouchableOpacity
           onPress={() => this.props.deletar(id)}
           activeOpacity={0.7}

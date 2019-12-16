@@ -1,44 +1,47 @@
 import React from "react";
 import { View, ScrollView } from "react-native";
 import PlusButton from "../plus-button";
-import CardFicha from "../card-ficha";
+import CardExercicio from "../card-exercicio";
 import styles from "./styles";
 import { AsyncStorage } from "react-native";
-import Ficha from "../../models/ficha";
+import Exercicio from "../../models/exercicio";
 
 export default class Home extends React.Component {
   state = {
-    fichas: []
+    exercicios: []
   };
   componentDidMount() {
     this.loadJson();
   }
-  callback(fichas) {
+  callback(exercicios) {
     this.setState({
-      fichas: [...fichas]
+      exercicios: [...exercicios]
     });
     this.updateJson();
   }
   deletar(key) {
-    let { fichas } = this.state;
-    fichas.splice(key, 1);
-    this.setState({ fichas });
+    let { exercicios } = this.state;
+    exercicios.splice(key, 1);
+    this.setState({ exercicios });
     this.updateJson();
   }
   editar(key) {
-    let { fichas } = this.state;
-    this.setState({ fichas });
+    let { exercicios } = this.state;
+    this.setState({ exercicios });
     let editarTexto = () => {
-      this.props.navigation.navigate("FichaView", {
+      this.props.navigation.navigate("ExercicioView", {
         callback: this.callback.bind(this),
-        fichas,
+        exercicios,
         key
       });
     };
     editarTexto();
   }
   async updateJson() {
-    await AsyncStorage.setItem("fichas", JSON.stringify(this.state.fichas))
+    await AsyncStorage.setItem(
+      "exercicios",
+      JSON.stringify(this.state.exercicios)
+    )
       .then(() => {
         console.log("It was saved successfully");
       })
@@ -47,25 +50,25 @@ export default class Home extends React.Component {
       });
   }
   async loadJson() {
-    let fichas = [];
+    let exercicios = [];
     try {
-      fichas = JSON.parse(await AsyncStorage.getItem("fichas"));
-      fichas = fichas.map(
+      exercicios = JSON.parse(await AsyncStorage.getItem("exercicios"));
+      exercicios = exercicios.map(
         e =>
-          new Ficha(e._exercicio, e._numero, e._carga, e._series, e._repeticoes)
+          new Exercicio(e._nome, e._numero, e._carga, e._series, e._repeticoes)
       );
-      if (fichas == null) fichas = [];
-      this.setState({ fichas });
+      if (exercicios == null) exercicios = [];
+      this.setState({ exercicios });
     } catch (erro) {
       console.log(`There was an error loading the product: ${erro.message}`);
     }
   }
 
   render() {
-    let { fichas } = this.state;
-    const listarFichas = fichas.map((item, key) => (
-      <CardFicha
-        ficha={item}
+    let { exercicios } = this.state;
+    const listarExercicios = exercicios.map((item, key) => (
+      <CardExercicio
+        exercicio={item}
         key={key}
         id={key}
         deletar={() => this.deletar(key)}
@@ -74,12 +77,12 @@ export default class Home extends React.Component {
     ));
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.fichas}>{listarFichas}</ScrollView>
+        <ScrollView style={styles.exercicios}>{listarExercicios}</ScrollView>
         <PlusButton
           link={() => {
-            this.props.navigation.navigate("FichaView", {
+            this.props.navigation.navigate("ExercicioView", {
               callback: this.callback.bind(this),
-              fichas
+              exercicios
             });
           }}
         />

@@ -1,20 +1,20 @@
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import Home from "./views/home";
-import FichaView from "./views/ficha-view";
+import ExercicioView from "./views/exercicio-view";
 
 const AppNavigator = createStackNavigator(
   {
     Home: {
       screen: Home,
       navigationOptions: {
-        title: "Fichas"
+        title: "Ficha"
       }
     },
-    FichaView: {
-      screen: FichaView,
+    ExercicioView: {
+      screen: ExercicioView,
       navigationOptions: {
-        title: "Criar ficha"
+        title: "Exercicio"
       }
     }
   },

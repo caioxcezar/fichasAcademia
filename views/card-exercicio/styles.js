@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 export default StyleSheet.create({
-  ficha: {
+  exercicio: {
     borderColor: "#111",
     borderStyle: "solid",
     borderWidth: 1,

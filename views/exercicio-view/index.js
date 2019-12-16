@@ -1,14 +1,12 @@
 import React, { Component } from "react";
 import { View, Text, Button } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import Ficha from "../../models/ficha";
+import Exercicio from "../../models/exercicio";
 import styles from "./styles";
 import { TextInput } from "react-native-gesture-handler";
 
-export default class CardFicha extends React.Component {
+export default class CardExercicio extends React.Component {
   state = {
-    exercicio: "",
+    nome: "",
     numero: "",
     carga: "",
     series: "",
@@ -17,28 +15,28 @@ export default class CardFicha extends React.Component {
     key: -1
   };
   componentDidMount() {
-    let fichas = this.props.navigation.getParam("fichas");
+    let exercicios = this.props.navigation.getParam("exercicios");
     let key = this.props.navigation.getParam("key", -1);
     if (key != -1) {
       this.setState({
         btnNome: "Editar",
-        exercicio: fichas[key].exercicio,
-        numero: fichas[key].numero,
-        carga: fichas[key].carga,
-        series: fichas[key].series,
-        repeticoes: fichas[key].repeticoes,
+        nome: exercicios[key].nome,
+        numero: exercicios[key].numero,
+        carga: exercicios[key].carga,
+        series: exercicios[key].series,
+        repeticoes: exercicios[key].repeticoes,
         key
       });
     }
   }
   render() {
     return (
-      <View style={styles.ficha}>
+      <View style={styles.exercicio}>
         <Text>Nome Exercicio:</Text>
         <TextInput
-          onChangeText={text => this.setState({ exercicio: text })}
+          onChangeText={text => this.setState({ nome: text })}
           style={styles.input}
-          value={this.state.exercicio}
+          value={this.state.nome}
         />
         <Text>Nº:</Text>
         <TextInput
@@ -90,21 +88,19 @@ export default class CardFicha extends React.Component {
     }
   }
   editar() {
-    let { exercicio, numero, carga, series, repeticoes, key } = this.state;
+    let { nome, numero, carga, series, repeticoes, key } = this.state;
     let navigation = this.props.navigation;
-    let fichas = this.props.navigation.getParam("fichas");
-    fichas[key] = new Ficha(exercicio, numero, carga, series, repeticoes);
-    navigation.getParam("callback")(fichas);
+    let exercicios = this.props.navigation.getParam("exercicios");
+    exercicios[key] = new Exercicio(nome, numero, carga, series, repeticoes);
+    navigation.getParam("callback")(exercicios);
     navigation.navigate("Home");
   }
   salvar() {
-    let { exercicio, numero, carga, series, repeticoes } = this.state;
+    let { nome, numero, carga, series, repeticoes } = this.state;
     let navigation = this.props.navigation;
-    let fichas = this.props.navigation.getParam("fichas");
-    fichas.unshift(
-      new Ficha(exercicio, numero, carga, series, repeticoes, fichas)
-    );
-    navigation.getParam("callback")(fichas);
+    let exercicios = this.props.navigation.getParam("exercicios");
+    exercicios.unshift(new Exercicio(nome, numero, carga, series, repeticoes));
+    navigation.getParam("callback")(exercicios);
     navigation.navigate("Home");
   }
   checkNumber(text) {

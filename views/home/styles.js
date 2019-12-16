@@ -8,7 +8,7 @@ export default StyleSheet.create({
     margin: 0,
     padding: 0
   },
-  fichas: {
+  exercicios: {
     width: "100%",
     backgroundColor: "#fff"
   }

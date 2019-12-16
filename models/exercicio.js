@@ -1,13 +1,13 @@
-export default class Ficha {
-  constructor(exercicio, numero, carga, series, repeticoes) {
-    this._exercicio = exercicio;
+export default class Exercicio {
+  constructor(nome, numero, carga, series, repeticoes) {
+    this._nome = nome;
     this._numero = numero;
     this._carga = carga;
     this._series = series;
     this._repeticoes = repeticoes;
   }
-  get exercicio() {
-    return this._exercicio;
+  get nome() {
+    return this._nome;
   }
   get numero() {
     return this._numero;
