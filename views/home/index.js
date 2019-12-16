@@ -11,31 +11,45 @@ export default class Home extends React.Component {
     exercicios: []
   };
   componentDidMount() {
+    console.log(this.state.exercicios[this.state.exercicios.length - 1]);
     this.loadJson();
   }
-  callback(exercicios) {
+  callback(exercicio) {
+    let exercicios = this.state.exercicios;
+    exercicios.forEach(e => {
+      if (e.cod == exercicio.cod) {
+        e = exercicio;
+        this.setState({
+          exercicios
+        });
+        this.updateJson();
+        return;
+      }
+    });
+    exercicios.unshift(exercicio);
     this.setState({
-      exercicios: [...exercicios]
+      exercicios
     });
     this.updateJson();
   }
   deletar(key) {
     let { exercicios } = this.state;
-    exercicios.splice(key, 1);
+    let index = exercicios.findIndex(e => e.cod == key);
+    exercicios.splice(index, 1);
     this.setState({ exercicios });
+    this.forceUpdate();
     this.updateJson();
   }
-  editar(key) {
-    let { exercicios } = this.state;
-    this.setState({ exercicios });
+  editar(exercicio) {
     let editarTexto = () => {
       this.props.navigation.navigate("ExercicioView", {
         callback: this.callback.bind(this),
-        exercicios,
-        key
+        exercicio,
+        key: exercicio.cod
       });
     };
     editarTexto();
+    this.forceUpdate();
   }
   async updateJson() {
     await AsyncStorage.setItem(
@@ -55,7 +69,14 @@ export default class Home extends React.Component {
       exercicios = JSON.parse(await AsyncStorage.getItem("exercicios"));
       exercicios = exercicios.map(
         e =>
-          new Exercicio(e._nome, e._numero, e._carga, e._series, e._repeticoes)
+          new Exercicio(
+            e._nome,
+            e._numero,
+            e._carga,
+            e._series,
+            e._repeticoes,
+            e._cod
+          )
       );
       if (exercicios == null) exercicios = [];
       this.setState({ exercicios });
@@ -66,23 +87,25 @@ export default class Home extends React.Component {
 
   render() {
     let { exercicios } = this.state;
-    const listarExercicios = exercicios.map((item, key) => (
-      <CardExercicio
-        exercicio={item}
-        key={key}
-        id={key}
-        deletar={() => this.deletar(key)}
-        editar={() => this.editar(key)}
-      />
-    ));
+    let next =
+      exercicios.length == 0 ? 0 : exercicios[exercicios.length - 1].cod + 1;
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.exercicios}>{listarExercicios}</ScrollView>
+        <ScrollView style={styles.exercicios}>
+          {exercicios.map(item => (
+            <CardExercicio
+              exercicio={item}
+              key={item.cod}
+              deletar={() => this.deletar(item.cod)}
+              editar={() => this.editar(item)}
+            />
+          ))}
+        </ScrollView>
         <PlusButton
           link={() => {
             this.props.navigation.navigate("ExercicioView", {
               callback: this.callback.bind(this),
-              exercicios
+              key: next
             });
           }}
         />

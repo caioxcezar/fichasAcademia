@@ -7,7 +7,7 @@ import styles from "./styles";
 export default class CardExercicio extends Component {
   state = {
     exercicio: this.props.exercicio,
-    id: this.props.id
+    id: this.props.exercicio.id
   };
 
   render() {

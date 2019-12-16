@@ -1,10 +1,14 @@
 export default class Exercicio {
-  constructor(nome, numero, carga, series, repeticoes) {
+  constructor(nome, numero, carga, series, repeticoes, cod) {
     this._nome = nome;
     this._numero = numero;
     this._carga = carga;
     this._series = series;
     this._repeticoes = repeticoes;
+    this._cod = cod;
+  }
+  get cod() {
+    return this._cod;
   }
   get nome() {
     return this._nome;

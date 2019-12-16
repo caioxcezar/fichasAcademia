@@ -15,17 +15,18 @@ export default class CardExercicio extends React.Component {
     key: -1
   };
   componentDidMount() {
-    let exercicios = this.props.navigation.getParam("exercicios");
-    let key = this.props.navigation.getParam("key", -1);
-    if (key != -1) {
+    let exercicio = this.props.navigation.getParam("exercicio", null);
+    let key = this.props.navigation.getParam("key");
+    console.log(key);
+    this.setState({ key });
+    if (exercicio != null) {
       this.setState({
         btnNome: "Editar",
-        nome: exercicios[key].nome,
-        numero: exercicios[key].numero,
-        carga: exercicios[key].carga,
-        series: exercicios[key].series,
-        repeticoes: exercicios[key].repeticoes,
-        key
+        nome: exercicio.nome,
+        numero: exercicio.numero,
+        carga: exercicio.carga,
+        series: exercicio.series,
+        repeticoes: exercicio.repeticoes
       });
     }
   }
@@ -81,26 +82,10 @@ export default class CardExercicio extends React.Component {
     );
   }
   btnAction() {
-    if (this.state.btnNome == "Editar") {
-      this.editar();
-    } else {
-      this.salvar();
-    }
-  }
-  editar() {
     let { nome, numero, carga, series, repeticoes, key } = this.state;
     let navigation = this.props.navigation;
-    let exercicios = this.props.navigation.getParam("exercicios");
-    exercicios[key] = new Exercicio(nome, numero, carga, series, repeticoes);
-    navigation.getParam("callback")(exercicios);
-    navigation.navigate("Home");
-  }
-  salvar() {
-    let { nome, numero, carga, series, repeticoes } = this.state;
-    let navigation = this.props.navigation;
-    let exercicios = this.props.navigation.getParam("exercicios");
-    exercicios.unshift(new Exercicio(nome, numero, carga, series, repeticoes));
-    navigation.getParam("callback")(exercicios);
+    let exercicio = new Exercicio(nome, numero, carga, series, repeticoes, key);
+    navigation.getParam("callback")(exercicio);
     navigation.navigate("Home");
   }
   checkNumber(text) {
