@@ -1,35 +1,39 @@
 import React from "react";
-import { View, ScrollView } from "react-native";
+import { View, Alert } from "react-native";
 import PlusButton from "../plus-button";
 import CardExercicio from "../card-exercicio";
 import styles from "./styles";
 import { AsyncStorage } from "react-native";
 import Exercicio from "../../models/exercicio";
+import update from "react-addons-update";
+import { FlatList } from "react-native-gesture-handler";
 
 export default class Home extends React.Component {
   state = {
     exercicios: []
   };
   componentDidMount() {
-    console.log(this.state.exercicios[this.state.exercicios.length - 1]);
     this.loadJson();
   }
   callback(exercicio) {
     let exercicios = this.state.exercicios;
-    exercicios.forEach(e => {
-      if (e.cod == exercicio.cod) {
-        e = exercicio;
+    let edicao = false;
+    exercicios.forEach((e, index) => {
+      if (Math.floor(e.cod) == Math.floor(exercicio.cod)) {
+        exercicio.cod += 0.0001;
         this.setState({
-          exercicios
+          exercicios: update(exercicios, {
+            $splice: [[index, 1, exercicio]]
+          })
         });
-        this.updateJson();
-        return;
+        edicao = true;
       }
     });
-    exercicios.unshift(exercicio);
-    this.setState({
-      exercicios
-    });
+    if (!edicao) {
+      this.setState({
+        exercicios: update(exercicios, { $push: [exercicio] })
+      });
+    }
     this.updateJson();
   }
   deletar(key) {
@@ -37,7 +41,6 @@ export default class Home extends React.Component {
     let index = exercicios.findIndex(e => e.cod == key);
     exercicios.splice(index, 1);
     this.setState({ exercicios });
-    this.forceUpdate();
     this.updateJson();
   }
   editar(exercicio) {
@@ -49,18 +52,21 @@ export default class Home extends React.Component {
       });
     };
     editarTexto();
-    this.forceUpdate();
+    this.updateJson();
   }
   async updateJson() {
     await AsyncStorage.setItem(
       "exercicios",
-      JSON.stringify(this.state.exercicios)
+      JSON.stringify(
+        this.state.exercicios.map(e => {
+          e.cod = Math.floor(e.cod);
+          return e;
+        })
+      )
     )
-      .then(() => {
-        console.log("It was saved successfully");
-      })
+      .then(() => {})
       .catch(erro => {
-        console.log(`There was an error saving the product: ${erro.message}`);
+        Alert.alert("Atenção", `Erro: ${erro.message}`);
       });
   }
   async loadJson() {
@@ -81,26 +87,31 @@ export default class Home extends React.Component {
       if (exercicios == null) exercicios = [];
       this.setState({ exercicios });
     } catch (erro) {
-      console.log(`There was an error loading the product: ${erro.message}`);
+      Alert.alert("Atenção", `Erro: ${erro.message}`);
     }
   }
 
   render() {
     let { exercicios } = this.state;
     let next =
-      exercicios.length == 0 ? 0 : exercicios[exercicios.length - 1].cod + 1;
+      exercicios.length === 0
+        ? 1
+        : Math.floor(exercicios[exercicios.length - 1].cod) + 1;
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.exercicios}>
-          {exercicios.map(item => (
+        <FlatList
+          style={styles.exercicios}
+          data={exercicios}
+          renderItem={({ item }) => (
             <CardExercicio
+              id={item.cod}
               exercicio={item}
-              key={item.cod}
               deletar={() => this.deletar(item.cod)}
               editar={() => this.editar(item)}
             />
-          ))}
-        </ScrollView>
+          )}
+          keyExtractor={item => "" + item.cod}
+        />
         <PlusButton
           link={() => {
             this.props.navigation.navigate("ExercicioView", {

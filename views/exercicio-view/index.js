@@ -17,7 +17,6 @@ export default class CardExercicio extends React.Component {
   componentDidMount() {
     let exercicio = this.props.navigation.getParam("exercicio", null);
     let key = this.props.navigation.getParam("key");
-    console.log(key);
     this.setState({ key });
     if (exercicio != null) {
       this.setState({

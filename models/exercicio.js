@@ -7,6 +7,9 @@ export default class Exercicio {
     this._repeticoes = repeticoes;
     this._cod = cod;
   }
+  set cod(value) {
+    this._cod = value;
+  }
   get cod() {
     return this._cod;
   }
